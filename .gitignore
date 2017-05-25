@@ -1,0 +1,6 @@
+/logs
+/data/*
+/code/*
+/.data
+.env
+

@@ -1,0 +1,52 @@
+version: '2'
+services:
+    mysql:
+        image: mysql
+        command: mysqld --user=root --verbose --skip-sync-frm --innodb_flush_log_at_trx_commit=0 --innodb-support-xa=0 --bind-address=0.0.0.0 --query-cache-type=1
+        ports:
+            - 3307:3306
+        volumes:
+            - "./data/db:/var/lib/mysql"
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    php:
+        build: ./php7-fpm
+        ports:
+            - 9000:9000
+        links:
+            - mysql
+            - mongo
+            - redis
+        volumes:
+            - ${SYMFONY_APP_PATH}:/app
+            - ./logs/symfony:/app/var/logs
+            - ./php7-fpm/php-timezone.ini:/usr/local/etc/php/conf.d/docker-php-timezone.ini
+    nginx:
+        build: ./nginx
+        ports:
+            - 8080:80
+        links:
+            - php
+        volumes_from:
+            - php
+        volumes:
+            - ./logs/nginx/:/var/log/nginx
+    mongo:  
+        image: mongo:3.4
+        volumes:
+            - ./data/mongodb:/data/db
+    redis:
+        image: redis:3.0.7-alpine
+    elk:
+        image: willdurand/elk
+        ports:
+            - 8081:80
+        volumes:
+            - ./elk/logstash:/etc/logstash
+            - ./elk/logstash/patterns:/opt/logstash/patterns
+        volumes_from:
+            - php
+            - nginx
