@@ -78,6 +78,11 @@ RUN echo "xdebug.remote_connect_back=1" >> /usr/local/etc/php/conf.d/docker-php-
 RUN echo "xdebug.idekey=\"PHPSTORM\"" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo "xdebug.remote_port=9001" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
+#Other PHP Settings
+RUN echo "upload_max_filesize = 100M" >> /usr/local/etc/php/conf.d/docker-php-general.ini
+RUN echo "post_max_size = 100M" >> /usr/local/etc/php/conf.d/docker-php-general.ini
+RUN echo "date.timezone = Europe/Rome" >> /usr/local/etc/php/conf.d/docker-php-general.ini
+
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN composer --version
