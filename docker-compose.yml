@@ -37,8 +37,19 @@ services:
         image: mongo:3.4
         volumes:
             - ./data/mongodb:/data/db
+        ports:
+            - "27017:27017"
+        command: --rest --noauth
+
     redis:
         image: redis:3.0.7-alpine
+    neo4j:
+        image: neo4j:3.0
+        ports:
+            - 7474:7474
+        volumes:
+            - ./neo4j/data:/data
+            - ./neo4j/logs:/logs
     elk:
         image: willdurand/elk
         ports:
